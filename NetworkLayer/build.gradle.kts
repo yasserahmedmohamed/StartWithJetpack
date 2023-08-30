@@ -9,6 +9,7 @@ android {
 
     defaultConfig {
         minSdk = 24
+        buildConfigField("String","BASE_URL","\"https://dev.btech.com/rest/en/V1/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -29,6 +30,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    android {
+        buildFeatures {
+            buildConfig = true
+        }
     }
 }
 

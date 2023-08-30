@@ -5,6 +5,7 @@ import com.yasser.networklayer.base.request.ProviderRequestData
 import com.yasser.networklayer.base.response.ProviderResponseData
 import com.yasser.networklayer.provider.NetworkProviderInterface
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.yasser.networklayer.BuildConfig
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -27,7 +28,7 @@ class RetrofitNetworkProvider: NetworkProviderInterface {
         okkHttpclient = provideOkHttpClient(userToken)
         retrofit = Retrofit.Builder()
             .client(okkHttpclient)
-            .baseUrl("https://dummyjson.com/")//Build.Config.BaseUrl
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()

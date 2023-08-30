@@ -21,14 +21,14 @@ class NetworkRequestBuilder<T> private constructor(
             files = files,
         )
     }
-    class Builder<T: BaseApiResponse>(private val responseType: Class<T>) {
+    class Builder<T>(private val responseType: Class<T>) {
         private var requestType: NetworkRequestType? = null
 
         private var endPointUrl: EndPointUrlCreator? = null
 
         private var bodyParams: Map<String, Any>? = null
 
-        private var headerParams: Map<String, Any>? = null
+        private var headerParams= HashMap<String, Any>()
 
         private var files: List<File>? = null
 
@@ -45,8 +45,8 @@ class NetworkRequestBuilder<T> private constructor(
             this.bodyParams = params
         }
 
-        fun headerParams(params: Map<String, Any>) = apply {
-            this.headerParams = params
+        fun headerParams(key:String,value:String) = apply {
+            this.headerParams[key] = value
         }
 
         fun files(files: List<File>) = apply {

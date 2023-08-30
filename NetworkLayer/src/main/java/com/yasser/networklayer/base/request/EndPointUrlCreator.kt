@@ -19,17 +19,19 @@ class EndPointUrlCreator private constructor(
 
 
         fun build(): EndPointUrlCreator {
-            var url = ""
-            pathParams.forEach {
-                url +="$it/"
-            }
-            if (queryParams.size>0){
-                url+="?"
-            }
-            queryParams.forEach {
-                url+="${it.first}=${it.second}"
-            }
+            val url = buildUrl()
             return EndPointUrlCreator(url)
+        }
+
+
+        private fun buildUrl(): String {
+            val path = pathParams.joinToString("/")
+            val queryString = queryParams.joinToString("&") { "${it.first}=${it.second}" }
+            return if (queryParams.isNotEmpty()) {
+                "$path?$queryString"
+            } else {
+                path
+            }
         }
     }
 }

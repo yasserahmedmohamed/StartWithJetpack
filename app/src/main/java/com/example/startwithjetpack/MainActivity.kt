@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.startwithjetpack.XFeature.XRepository
+import com.example.startwithjetpack.PLPFeature.PLPRepository
 import com.yasser.networklayer.NetworkLayerImplementation
 import com.yasser.networklayer.base.response.NetworkResponseState
 import com.yasser.networklayer.provider.retrofit.RetrofitNetworkProvider
@@ -41,10 +41,10 @@ class MainActivity : ComponentActivity() {
 
         val netLayer = NetworkLayerImplementation(provider)
 
-        val repo = XRepository(netLayer)
+        val repo = PLPRepository(netLayer)
 
         GlobalScope.launch {
-          val response =   repo.callApi()
+          val response =   repo.callApi(50,1,20,"position")
 
             when(response){
                 is NetworkResponseState.AuthorizationError -> TODO()
