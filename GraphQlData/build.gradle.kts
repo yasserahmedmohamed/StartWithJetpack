@@ -1,15 +1,21 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.apollographql.apollo3") version "4.0.0-alpha.3"
+}
+
+apollo {
+    service("service") {
+        packageName.set("com.example")
+    }
 }
 
 android {
-    namespace = "com.yasser.networklayer"
+    namespace = "com.example.graphqldata"
     compileSdk = 33
 
     defaultConfig {
         minSdk = 24
-        buildConfigField("String","BASE_URL","\"https://dev.btech.com/rest/en/V1/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -31,11 +37,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    android {
-        buildFeatures {
-            buildConfig = true
-        }
-    }
 }
 
 dependencies {
@@ -43,20 +44,10 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
-    implementation(project(mapOf("path" to ":GraphQlData")))
     implementation(project(mapOf("path" to ":GraphQlDomain")))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    setupRetrofit(this)
-}
-
-fun  setupRetrofit(configuration:DependencyHandlerScope) {
-    val retrofit_version = "2.6.0"
-    configuration.implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
-
-    configuration.implementation( "com.squareup.retrofit2:converter-gson:$retrofit_version")
-    configuration.implementation ("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
-    configuration.implementation("com.squareup.okhttp3:logging-interceptor:3.9.0")
+    implementation("com.apollographql.apollo3:apollo-runtime:4.0.0-alpha.3")
 
 }

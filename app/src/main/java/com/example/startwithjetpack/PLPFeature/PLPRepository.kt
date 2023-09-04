@@ -1,27 +1,33 @@
 package com.example.startwithjetpack.PLPFeature
 
-import com.yasser.networklayer.base.networkLayerInterface.NetworkLayer
-import com.yasser.networklayer.base.request.EndPointUrlCreator
-import com.yasser.networklayer.base.request.NetworkRequestBuilder
-import com.yasser.networklayer.base.request.NetworkRequestType
-import com.yasser.networklayer.base.response.NetworkResponseState
+import android.util.Log
+import com.example.startwithjetpack.PLPFeature.data.PLPResponse
+import com.yasser.networklayer.restAPIs.interfaces.NetworkLayerInterface
+import com.yasser.networklayer.restAPIs.request.EndPointUrlCreator
+import com.yasser.networklayer.restAPIs.request.NetworkRequestBuilder
+import com.yasser.networklayer.restAPIs.request.NetworkRequestType
+import com.yasser.networklayer.restAPIs.response.NetworkResponseState
 
-class PLPRepository constructor(val networkLayer: NetworkLayer) {
+class PLPRepository constructor(val networkLayer: NetworkLayerInterface) {
 
-    suspend fun callApi(categoryID:Int,page:Int,noItemsPerPage:Int,product_list_order:String): NetworkResponseState<PLPResponse> {
+    suspend fun callApi(
+        categoryID: Int,
+        page: Int,
+        noItemsPerPage: Int,
+        product_list_order: String
+    ): NetworkResponseState<PLPResponse> {
 
-        val endPoint = EndPointUrlCreator.Builder()
-            .addToPath("customer")
-            .addToPath("category")
-            .addToPath(categoryID.toString())
-            .addToPath(page.toString())
-            .addToPath(noItemsPerPage.toString())
-            .addToQuery("product_list_order",product_list_order)
-            .build()
+
+        val endPointUrlCreator =
+            EndPointUrlCreator.Builder()
+                .setEndPointUrl("customer/category/{0}/{1}/{2}?product_list_order={3}")
+                .setValues(categoryID,page,noItemsPerPage,product_list_order)
+
+        Log.e("endPointUrlCreator2",endPointUrlCreator.url)
 
         val requestData = NetworkRequestBuilder.Builder(PLPResponse::class.java)
-            .endPointUrl(endPoint)
-            .headerParams("Authorization","Bearer 7i7xck3uns4eezn7isg6cngyjda5wzc2")
+            .endPointUrl(endPointUrlCreator)
+            .headerParams("Authorization", "Bearer 7i7xck3uns4eezn7isg6cngyjda5wzc2")
             .requestType(NetworkRequestType.GET)
             .build()
 

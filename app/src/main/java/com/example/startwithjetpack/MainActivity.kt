@@ -12,11 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.graphqldomain.client.CountryClient
 import com.example.startwithjetpack.PLPFeature.PLPRepository
-import com.yasser.networklayer.NetworkLayerImplementation
-import com.yasser.networklayer.base.response.NetworkResponseState
-import com.yasser.networklayer.provider.retrofit.RetrofitNetworkProvider
 import com.example.startwithjetpack.ui.theme.StartWithJetpackTheme
+import com.yasser.networklayer.graphQl.ApolloProvider
+import com.yasser.networklayer.graphQl.GraphQlLayer
+import com.yasser.networklayer.restAPIs.NetworkLayer
+import com.yasser.networklayer.restAPIs.response.NetworkResponseState
+import com.yasser.networklayer.restAPIs.provider.retrofit.RetrofitNetworkProvider
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -36,26 +39,31 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val provider = RetrofitNetworkProvider()
-        provider.startService()
-
-        val netLayer = NetworkLayerImplementation(provider)
-
-        val repo = PLPRepository(netLayer)
+//        val provider = RetrofitNetworkProvider()
+//        provider.startService()
+//
+//        val netLayer = NetworkLayer(provider)
+//
+//        val repo = PLPRepository(netLayer)
+//
+//        GlobalScope.launch {
+//          val response =   repo.callApi(50,1,20,"position")
+//
+//            when(response){
+//                is NetworkResponseState.AuthorizationError -> TODO()
+//                is NetworkResponseState.GenericError -> TODO()
+//                is NetworkResponseState.NetworkConnectionError -> TODO()
+//                is NetworkResponseState.ServerError -> TODO()
+//                is NetworkResponseState.Success -> {
+//                    Log.e("CallResponse",response.results.products.toString())
+//                }
+//            }
+//
+//        }
 
         GlobalScope.launch {
-          val response =   repo.callApi(50,1,20,"position")
-
-            when(response){
-                is NetworkResponseState.AuthorizationError -> TODO()
-                is NetworkResponseState.GenericError -> TODO()
-                is NetworkResponseState.NetworkConnectionError -> TODO()
-                is NetworkResponseState.ServerError -> TODO()
-                is NetworkResponseState.Success -> {
-                    Log.e("CallResponse",response.results.products.toString())
-                }
-            }
-
+          val response =   GraphQlLayer(ApolloProvider()).getClientProvider(CountryClient::class.java).getCountries()
+            Log.e("GraphQLResponse",response.toString())
         }
 
     }
