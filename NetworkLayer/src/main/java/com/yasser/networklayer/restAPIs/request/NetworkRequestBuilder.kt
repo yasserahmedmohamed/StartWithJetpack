@@ -2,13 +2,14 @@ package com.yasser.networklayer.restAPIs.request
 
 import java.io.File
 
-class NetworkRequestBuilder<T> private constructor(
+class NetworkRequestBuilder<T,Y> private constructor(
     val requestType: NetworkRequestType,
     val endPointUrl: EndPointUrlCreator,
     val bodyParams: Map<String, Any>? = null,
     val headerParams: Map<String, Any>? = null,
     val files: List<File>? = null,
-    val responseType :Class<T>
+    val successModel :Class<T>,
+    val failModel:Class<Y>
     ) {
 
     internal fun getProviderData(): ProviderRequestData {
@@ -20,7 +21,7 @@ class NetworkRequestBuilder<T> private constructor(
             files = files,
         )
     }
-    class Builder<T>(private val responseType: Class<T>) {
+    class Builder<T,Y> {
         private var requestType: NetworkRequestType? = null
 
         private var endPointUrl: EndPointUrlCreator? = null
@@ -31,12 +32,23 @@ class NetworkRequestBuilder<T> private constructor(
 
         private var files: List<File>? = null
 
+        private lateinit var successModel:Class<T>
+        private lateinit var failModel:Class<Y>
+
 
         fun requestType(requestType: NetworkRequestType) = apply {
             this.requestType = requestType
         }
 
-        fun endPointUrl(endPointUrl: EndPointUrlCreator) = apply {
+        fun successModel(successModel:Class<T>) = apply {
+            this.successModel = successModel
+        }
+
+        fun failModel(failModel:Class<Y>) = apply {
+            this.failModel = failModel
+        }
+
+            fun endPointUrl(endPointUrl: EndPointUrlCreator) = apply {
             this.endPointUrl = endPointUrl
         }
 
@@ -53,11 +65,19 @@ class NetworkRequestBuilder<T> private constructor(
         }
 
         /* in this function will add all validations on request parameters */
-        fun build(): NetworkRequestBuilder<T> {
+        fun build(): NetworkRequestBuilder<T,Y> {
             if (requestType == null)
                 throw Exception("please select request type")
             if (endPointUrl==null) {
                 throw Exception("endPointUrl can not be empty")
+            }
+
+            if (successModel==null){
+                throw Exception("successModel can not be empty")
+            }
+
+            if (failModel==null){
+                throw Exception("failModel can not be empty")
             }
 
             return NetworkRequestBuilder(
@@ -66,7 +86,8 @@ class NetworkRequestBuilder<T> private constructor(
                 bodyParams = bodyParams,
                 headerParams = headerParams,
                 files = files,
-                responseType = responseType
+                successModel = this.successModel!!,
+                failModel = failModel!!
             )
         }
 

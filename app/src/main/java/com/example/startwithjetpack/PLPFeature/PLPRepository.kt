@@ -15,7 +15,7 @@ class PLPRepository constructor(val networkLayer: NetworkLayerInterface) {
         page: Int,
         noItemsPerPage: Int,
         product_list_order: String
-    ): NetworkResponseState<PLPResponse> {
+    ): NetworkResponseState<PLPResponse,Any> {
 
 
         val endPointUrlCreator =
@@ -25,8 +25,10 @@ class PLPRepository constructor(val networkLayer: NetworkLayerInterface) {
 
         Log.e("endPointUrlCreator2",endPointUrlCreator.url)
 
-        val requestData = NetworkRequestBuilder.Builder(PLPResponse::class.java)
+        val requestData = NetworkRequestBuilder.Builder<PLPResponse,Any>()
             .endPointUrl(endPointUrlCreator)
+            .successModel(PLPResponse::class.java)
+            .failModel(Any::class.java)
             .headerParams("Authorization", "Bearer 7i7xck3uns4eezn7isg6cngyjda5wzc2")
             .requestType(NetworkRequestType.GET)
             .build()

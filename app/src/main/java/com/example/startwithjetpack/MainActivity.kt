@@ -3,6 +3,7 @@ package com.example.startwithjetpack
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,32 +40,33 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-//        val provider = RetrofitNetworkProvider()
-//        provider.startService()
-//
-//        val netLayer = NetworkLayer(provider)
-//
-//        val repo = PLPRepository(netLayer)
-//
-//        GlobalScope.launch {
-//          val response =   repo.callApi(50,1,20,"position")
-//
-//            when(response){
-//                is NetworkResponseState.AuthorizationError -> TODO()
-//                is NetworkResponseState.GenericError -> TODO()
-//                is NetworkResponseState.NetworkConnectionError -> TODO()
-//                is NetworkResponseState.ServerError -> TODO()
-//                is NetworkResponseState.Success -> {
-//                    Log.e("CallResponse",response.results.products.toString())
-//                }
-//            }
-//
-//        }
+        val provider = RetrofitNetworkProvider()
+        provider.startService()
+
+        val netLayer = NetworkLayer(provider)
+
+        val repo = PLPRepository(netLayer)
 
         GlobalScope.launch {
-          val response =   GraphQlLayer(ApolloProvider()).getClientProvider(CountryClient::class.java).getCountries()
-            Log.e("GraphQLResponse",response.toString())
+          val response =   repo.callApi(50,1,20,"position")
+
+            when(response){
+                is NetworkResponseState.Success -> {
+                    Log.e("CallResponse",response.results.products.toString())
+                }
+
+                is NetworkResponseState.Fail -> {
+                    Log.e("CallResponse","${response.errorType?.name} ${response.errorResponse}")
+                }
+            }
+
         }
+
+//        GlobalScope.launch {
+//          val response =   GraphQlLayer(ApolloProvider()).getClientProvider(CountryClient::class.java).getCountries()
+//            Log.e("GraphQLResponse",response.toString())
+//
+//        }
 
     }
 }

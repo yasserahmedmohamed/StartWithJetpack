@@ -4,8 +4,9 @@ import com.yasser.networklayer.restAPIs.request.NetworkRequestBuilder
 import com.yasser.networklayer.restAPIs.response.NetworkResponseState
 import com.yasser.networklayer.restAPIs.response.ProviderResponseData
 import com.google.gson.Gson
+import com.yasser.networklayer.restAPIs.response.NetworkUtils
 
- abstract class NetworkLayerInterface constructor(private val provider: NetworkProviderInterface) {
+abstract class NetworkLayerInterface constructor(private val provider: NetworkProviderInterface) {
     fun getProvider(): NetworkProviderInterface {
         return provider
     }
@@ -15,13 +16,18 @@ import com.google.gson.Gson
      * @return is the model to know if response is SUCCESS with the return data or FAIL with the reason of failure
      *
      */
-    abstract suspend fun <T> callApi(requestData: NetworkRequestBuilder<T>): NetworkResponseState<T>
+    abstract suspend fun <T,Y> callApi(requestData: NetworkRequestBuilder<T,Y>): NetworkResponseState<T,Y>
 
-    fun <T> mapResponse(data: ProviderResponseData, mapClass: Class<T>): NetworkResponseState<T> {
+    fun <T,Y> mapResponse(data: ProviderResponseData, successClass: Class<T>, failClass: Class<Y>): NetworkResponseState<T,Y> {
         if (data.isSuccess){
-           return NetworkResponseState.Success( mapToObject(data.body,mapClass))
+           return NetworkResponseState.Success( mapToObject(data.body,successClass))
         }else{
-            TODO() // handle errors that return from the server with codes
+           return NetworkResponseState.Fail(
+               errorType = NetworkUtils.getNetworkErrorType(data.code),
+               errorResponse = mapToObject(data.body,failClass),
+               error = ""
+
+           )
         }
     }
 
