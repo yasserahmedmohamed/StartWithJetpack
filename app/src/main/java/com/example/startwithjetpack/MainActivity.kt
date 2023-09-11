@@ -3,7 +3,6 @@ package com.example.startwithjetpack
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.graphqldomain.client.CountryClient
 import com.example.startwithjetpack.PLPFeature.PLPRepository
 import com.example.startwithjetpack.ui.theme.StartWithJetpackTheme
-import com.yasser.networklayer.graphQl.ApolloProvider
-import com.yasser.networklayer.graphQl.GraphQlLayer
 import com.yasser.networklayer.restAPIs.NetworkLayer
 import com.yasser.networklayer.restAPIs.response.NetworkResponseState
 import com.yasser.networklayer.restAPIs.provider.retrofit.RetrofitNetworkProvider
@@ -40,8 +36,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val provider = RetrofitNetworkProvider()
-        provider.startService()
+        val provider = RetrofitNetworkProvider(hashMapOf(
+            "authorization" to "Bearer 7i7xck3uns4eezn7isg6cngyjda5wzc2"
+        ))
 
         val netLayer = NetworkLayer(provider)
 
@@ -52,22 +49,15 @@ class MainActivity : ComponentActivity() {
 
             when(response){
                 is NetworkResponseState.Success -> {
-                    Log.e("CallResponse",response.results.products.toString())
+                    Log.e("retrofitResponse",response.results.toString())
                 }
 
                 is NetworkResponseState.Fail -> {
-                    Log.e("CallResponse","${response.errorType?.name} ${response.errorResponse}")
+                    Log.e("retrofitResponse","${response.errorType?.name} ${response.error}")
                 }
             }
 
         }
-
-//        GlobalScope.launch {
-//          val response =   GraphQlLayer(ApolloProvider()).getClientProvider(CountryClient::class.java).getCountries()
-//            Log.e("GraphQLResponse",response.toString())
-//
-//        }
-
     }
 }
 

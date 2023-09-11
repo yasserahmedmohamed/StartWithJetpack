@@ -22,7 +22,7 @@ object NetworkUtils{
 
             150 -> NetworkCodeError.INVALID_PARAMETER
 
-            else -> NetworkCodeError.GENERIC_HTTP_ERROR
+            else -> NetworkCodeError.NO_INTERNET_CONNECTION
         }
     }
 }

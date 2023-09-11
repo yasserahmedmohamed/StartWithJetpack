@@ -1,54 +1,39 @@
 package com.yasser.networklayer.restAPIs.request
 
+import com.yasser.networklayer.BuildConfig
 import java.io.File
 
-class NetworkRequestBuilder<T,Y> private constructor(
+class NetworkRequestBuilder private constructor(
     val requestType: NetworkRequestType,
-    val endPointUrl: EndPointUrlCreator,
-    val bodyParams: Map<String, Any>? = null,
-    val headerParams: Map<String, Any>? = null,
-    val files: List<File>? = null,
-    val successModel :Class<T>,
-    val failModel:Class<Y>
-    ) {
+    val endPointUrl: String,
+    val bodyParams: Map<String, Any>?,
+    val headersParams: Map<String, String>?,
+    val files: List<File>?,
+    val timeoutInSeconds: Long,
+    val baseUrl: String
+) {
 
-    internal fun getProviderData(): ProviderRequestData {
-        return ProviderRequestData(
-            requestType = requestType,
-            endPointGenerator = endPointUrl,
-            bodyParams = bodyParams,
-            headersParams = headerParams,
-            files = files,
-        )
-    }
-    class Builder<T,Y> {
+    class Builder {
         private var requestType: NetworkRequestType? = null
 
-        private var endPointUrl: EndPointUrlCreator? = null
+        private var endPointUrl: String? = null
+
+        private var timeoutInSeconds: Long? = null
+
+        private var baseUrl: String? = null
+
 
         private var bodyParams: Map<String, Any>? = null
 
-        private var headerParams= HashMap<String, Any>()
+        private var headerParams = HashMap<String, String>()
 
         private var files: List<File>? = null
-
-        private lateinit var successModel:Class<T>
-        private lateinit var failModel:Class<Y>
-
 
         fun requestType(requestType: NetworkRequestType) = apply {
             this.requestType = requestType
         }
 
-        fun successModel(successModel:Class<T>) = apply {
-            this.successModel = successModel
-        }
-
-        fun failModel(failModel:Class<Y>) = apply {
-            this.failModel = failModel
-        }
-
-            fun endPointUrl(endPointUrl: EndPointUrlCreator) = apply {
+        fun endPointUrl(endPointUrl: String) = apply {
             this.endPointUrl = endPointUrl
         }
 
@@ -56,8 +41,16 @@ class NetworkRequestBuilder<T,Y> private constructor(
             this.bodyParams = params
         }
 
-        fun headerParams(key:String,value:String) = apply {
+        fun headerParams(key: String, value: String) = apply {
             this.headerParams[key] = value
+        }
+
+        fun baseUrl(url: String) = apply {
+            this.baseUrl = url
+        }
+
+        fun requestTimeOut(seconds: Long) = apply {
+            this.timeoutInSeconds = seconds
         }
 
         fun files(files: List<File>) = apply {
@@ -65,30 +58,30 @@ class NetworkRequestBuilder<T,Y> private constructor(
         }
 
         /* in this function will add all validations on request parameters */
-        fun build(): NetworkRequestBuilder<T,Y> {
+        fun build(): NetworkRequestBuilder {
             if (requestType == null)
-                throw Exception("please select request type")
-            if (endPointUrl==null) {
-                throw Exception("endPointUrl can not be empty")
+                throw Exception("requestType not set in NetworkRequestBuilder")
+            if (endPointUrl == null) {
+                throw Exception("endPointUrl not set in NetworkRequestBuilder")
+            }
+            if (timeoutInSeconds == null) {
+                timeoutInSeconds = 60
             }
 
-            if (successModel==null){
-                throw Exception("successModel can not be empty")
+            if (baseUrl == null) {
+                baseUrl = BuildConfig.BASE_URL
             }
-
-            if (failModel==null){
-                throw Exception("failModel can not be empty")
-            }
-
             return NetworkRequestBuilder(
                 requestType = requestType!!,
                 endPointUrl = endPointUrl!!,
+                timeoutInSeconds = timeoutInSeconds!!,
                 bodyParams = bodyParams,
-                headerParams = headerParams,
+                headersParams = headerParams,
                 files = files,
-                successModel = this.successModel!!,
-                failModel = failModel!!
+                baseUrl = baseUrl!!
             )
+
+
         }
 
     }

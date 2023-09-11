@@ -5,6 +5,6 @@ sealed class NetworkResponseState<out T, out Y> {
     data class Fail<out T,out Y>(
         val errorType: NetworkCodeError? = null,
         val error: String? = null,
-        val errorResponse: Y?=null
+        val errorResponseModel: Y?=null
     ) :NetworkResponseState<T, Y>()
 }

@@ -1,4 +1,4 @@
-package com.yasser.networklayer.graphQl
+package com.example.graphqldata.graphQl
 
 import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 import com.example.graphqldata.ContinentClientProvider
