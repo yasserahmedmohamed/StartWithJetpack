@@ -3,21 +3,13 @@ package com.yasser.networklayer.restAPIs.interfaces
 import com.yasser.networklayer.restAPIs.request.NetworkRequestBuilder
 import com.yasser.networklayer.restAPIs.response.ProviderResponseData
 
-interface NetworkProviderInterface {
+fun interface NetworkProviderInterface {
     /*
      what provider need to start working and it will call in the start of application
      */
 //    fun startService()
 
-    /*
-    in case of we need to update Authorization token
-     */
-    fun updateTokenHeader(token: String)
 
-    /*
-    in case of we need to update Authorization token
-     */
-    fun updateLanguageHeader(language: String)
 
     /**
      *
@@ -28,9 +20,15 @@ interface NetworkProviderInterface {
     suspend fun callApi(requestData: NetworkRequestBuilder): ProviderResponseData
 
 
-    companion object{
-        const val languageHeaderKey = "Lang"
-        const val tokenHeaderKey = "authorization"
+    enum class Header(val header: String) {
+        HEADER_AUTHORIZATION("Authorization"),
+        HEADER_ACCEPT_RANGES("Accept-Ranges"),
+        HEADER_ETAG("ETag"),
+        HEADER_SERVER("Server"),
+        HEADER_CONTENT_TYPE("Content-Type"),
+        HEADER_CONTENT_LENGTH("Content-Length"),
+        HEADER_EXPIRES("Expires"),
+
     }
 
 }

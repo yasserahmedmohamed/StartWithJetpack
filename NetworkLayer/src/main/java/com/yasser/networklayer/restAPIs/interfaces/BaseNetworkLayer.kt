@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import com.yasser.networklayer.restAPIs.response.NetworkUtils
 
 abstract class BaseNetworkLayer constructor(private val provider: NetworkProviderInterface) {
-   internal fun getProvider(): NetworkProviderInterface {
+    internal fun getProvider(): NetworkProviderInterface {
         return provider
     }
 
@@ -20,26 +20,26 @@ abstract class BaseNetworkLayer constructor(private val provider: NetworkProvide
     abstract suspend fun <T, Y> callApi(
         requestData: NetworkRequestBuilder,
         successModel: Class<T>,
-        failModel:Class<Y>
+        failModel: Class<Y>
     ): NetworkResponseState<T, Y>
 
     suspend fun <T> callApi(
         requestData: NetworkRequestBuilder,
         successModel: Class<T>,
-    ): NetworkResponseState<T,Any>{
-       return callApi(requestData,successModel,Any::class.java)
+    ): NetworkResponseState<T, Any> {
+        return callApi(requestData, successModel, Any::class.java)
     }
 
 
-   internal fun <T, Y> mapResponse(
+    internal fun <T, Y> mapResponse(
         data: ProviderResponseData,
         successClass: Class<T>,
         failClass: Class<Y>
     ): NetworkResponseState<T, Y> {
-        if (data.isSuccess) {
-            return NetworkResponseState.Success(mapToObject(data.body, successClass)!!)
+        return if (data.isSuccess) {
+            NetworkResponseState.Success(mapToObject(data.body, successClass)!!)
         } else {
-            return NetworkResponseState.Fail(
+            NetworkResponseState.Fail(
                 errorType = NetworkUtils.getNetworkErrorType(data.code),
                 errorResponseModel = mapToObject(data.body, failClass),
                 error = ""
@@ -49,19 +49,17 @@ abstract class BaseNetworkLayer constructor(private val provider: NetworkProvide
     }
 
     private fun <T> mapToObject(responseObject: Any?, type: Class<T>): T? {
-        try {
-            if (responseObject is String){
-                val gson = Gson()
-                return gson.fromJson(responseObject, type)
-            }else{
-
-                val gson = Gson()
+        val gson = Gson()
+        return try {
+            if (responseObject is String) {
+                gson.fromJson(responseObject, type)
+            } else {
                 val json = gson.toJson(responseObject)
-                return gson.fromJson(json, type)
+                gson.fromJson(json, type)
             }
 
-        }catch (e:Throwable){
-           return null
+        } catch (e: Throwable) {
+            null
         }
 
     }

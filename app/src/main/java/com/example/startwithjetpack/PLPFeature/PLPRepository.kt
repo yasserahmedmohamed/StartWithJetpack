@@ -5,24 +5,22 @@ import com.yasser.networklayer.restAPIs.interfaces.BaseNetworkLayer
 import com.yasser.networklayer.restAPIs.request.NetworkRequestBuilder
 import com.yasser.networklayer.restAPIs.request.NetworkRequestType
 import com.yasser.networklayer.restAPIs.response.NetworkResponseState
+import javax.inject.Inject
 
-class PLPRepository constructor(val networkLayer: BaseNetworkLayer) {
+class PLPRepository @Inject constructor(private val networkLayer: BaseNetworkLayer) {
 
     suspend fun callApi(
         categoryID: Int,
         page: Int,
         noItemsPerPage: Int,
-        product_list_order: String
+        productListOrder: String
     ): NetworkResponseState<PLPResponse, Any> {
 
-        val requestData = NetworkRequestBuilder.Builder()
-            .endPointUrl("customer/category/$categoryID/$page/$noItemsPerPage?product_list_order=$product_list_order")
-            .requestType(NetworkRequestType.GET)
-            .build()
-
-
-        val responseData = networkLayer.callApi(requestData, PLPResponse::class.java)
-
-        return responseData
+        return networkLayer.callApi(
+            NetworkRequestBuilder.Builder()
+                .endPointUrl("customer/category/$categoryID/$page/$noItemsPerPage?product_list_order=$productListOrder")
+                .requestMethod(NetworkRequestType.GET)
+                .build(), PLPResponse::class.java
+        )
     }
 }

@@ -4,8 +4,8 @@ import com.yasser.networklayer.restAPIs.request.NetworkRequestType
 import com.yasser.networklayer.restAPIs.response.ProviderResponseData
 import com.yasser.networklayer.restAPIs.interfaces.NetworkProviderInterface
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.yasser.networklayer.restAPIs.interfaces.NetworkProviderInterface.Companion.languageHeaderKey
-import com.yasser.networklayer.restAPIs.interfaces.NetworkProviderInterface.Companion.tokenHeaderKey
+import com.yasser.networklayer.restAPIs.interfaces.NetworkProviderInterface.Header.HEADER_AUTHORIZATION
+import com.yasser.networklayer.restAPIs.request.Header
 import com.yasser.networklayer.restAPIs.request.NetworkRequestBuilder
 import okhttp3.ConnectionSpec
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -20,8 +20,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
-
-class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>) :
+class RetrofitNetworkProvider(private vararg val headers: Header) :
     NetworkProviderInterface {
 
 
@@ -29,56 +28,18 @@ class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>
     // ------------- The Retrofit Needs --------------------
     private var okkHttpclient: OkHttpClient? = null
     private var retrofit: RetrofitAPIs? = null
-    private var userToken: String = ""
-    private var languageHeader: String = ""
     private var currentBaseUrl = ""
     private var currentTimeOut: Long = 0
     // ------------------------------------------------------
     //******************************************************
 
 
-    init {
-
-        if (sharedHeaders.containsKey(languageHeaderKey)) {
-            languageHeader = sharedHeaders[languageHeaderKey] ?: ""
-        }
-
-        if (sharedHeaders.containsKey(tokenHeaderKey)) {
-            userToken = sharedHeaders[tokenHeaderKey] ?: ""
-        }
-    }
-
-    override fun updateTokenHeader(token: String) {
-        userToken = token
-        provideOkHttpClient()
-        provideRetrofitCaller()
-    }
-
-    override fun updateLanguageHeader(language: String) {
-        languageHeader = language
-        provideOkHttpClient()
-        provideRetrofitCaller()
-    }
 
 
     override suspend fun callApi(requestData: NetworkRequestBuilder): ProviderResponseData {
 
         var thereIsChangeInRequestData = false
 
-
-        if (requestData.headersParams?.containsKey(languageHeaderKey) == true &&
-            requestData.headersParams[languageHeaderKey] != languageHeader
-        ) {
-            languageHeader = requestData.headersParams[languageHeaderKey] ?: ""
-            thereIsChangeInRequestData = true
-        }
-
-        if (requestData.headersParams?.containsKey(tokenHeaderKey) == true &&
-            requestData.headersParams[tokenHeaderKey] != userToken
-        ) {
-            userToken = requestData.headersParams[tokenHeaderKey] ?: ""
-            thereIsChangeInRequestData = true
-        }
 
         if (requestData.timeoutInSeconds != currentTimeOut || okkHttpclient == null) {
             currentTimeOut = requestData.timeoutInSeconds
@@ -97,7 +58,7 @@ class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>
 
         try {
 
-            val response = when (requestData.requestType) {
+            val response = when (requestData.requestMethod) {
 
                 NetworkRequestType.GET -> {
                     retrofit!!.requestGETMethod(
@@ -126,7 +87,7 @@ class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>
                         val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
 
                         val body =
-                            MultipartBody.Part.createFormData("files", it.getName(), requestFile);
+                            MultipartBody.Part.createFormData("files", it.name, requestFile)
                         files.add(body)
                     }
 
@@ -161,9 +122,6 @@ class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>
                     )
                 }
 
-                else -> {
-                    throw Exception("${requestData.requestType.name}, is not implemented in retrofit provider")
-                }
             }
 
 
@@ -184,10 +142,10 @@ class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>
 
 
         } catch (e: Throwable) {
-            when (e) {
+            return when (e) {
 
                 is HttpException -> {
-                    return ProviderResponseData(
+                    ProviderResponseData(
                         false,
                         e.code(),
                         e.message()
@@ -254,18 +212,10 @@ class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>
 
         okHttpBuilder.addInterceptor { chain ->
             val request = chain.request().newBuilder()
-            sharedHeaders.forEach {
-                if (it.key != languageHeaderKey && it.key != tokenHeaderKey)
-                    request.addHeader(it.key, it.value)
+            headers.forEach {
+                request.addHeader(it.headerKey.header, it.headerValue)
             }
 
-            if (userToken.isNotEmpty()) {
-                val reqToken = if (userToken.contains("Bearer")) userToken else "Bearer $userToken"
-                request.addHeader(tokenHeaderKey, reqToken)
-            }
-
-            if (languageHeader.isNotEmpty())
-                request.addHeader(languageHeaderKey, languageHeader)
 
             return@addInterceptor chain.proceed(request.build())
         }
@@ -273,5 +223,6 @@ class RetrofitNetworkProvider(private val sharedHeaders: HashMap<String, String>
 
         okkHttpclient = okHttpBuilder.build()
     }
+
 
 }
