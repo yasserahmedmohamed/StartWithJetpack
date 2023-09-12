@@ -22,12 +22,7 @@ fun interface NetworkProviderInterface {
 
     enum class Header(val header: String) {
         HEADER_AUTHORIZATION("Authorization"),
-        HEADER_ACCEPT_RANGES("Accept-Ranges"),
-        HEADER_ETAG("ETag"),
-        HEADER_SERVER("Server"),
-        HEADER_CONTENT_TYPE("Content-Type"),
-        HEADER_CONTENT_LENGTH("Content-Length"),
-        HEADER_EXPIRES("Expires"),
+        HEADER_LANG("Accept-Language"),
 
     }
 
