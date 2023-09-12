@@ -4,7 +4,6 @@ import com.yasser.networklayer.restAPIs.request.NetworkRequestType
 import com.yasser.networklayer.restAPIs.response.ProviderResponseData
 import com.yasser.networklayer.restAPIs.interfaces.NetworkProviderInterface
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.yasser.networklayer.restAPIs.interfaces.NetworkProviderInterface.Header.HEADER_AUTHORIZATION
 import com.yasser.networklayer.restAPIs.request.Header
 import com.yasser.networklayer.restAPIs.request.NetworkRequestBuilder
 import okhttp3.ConnectionSpec
