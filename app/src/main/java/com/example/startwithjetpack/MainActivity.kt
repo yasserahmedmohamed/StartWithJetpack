@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.example.startwithjetpack.PLPFeature.PLPRepository
 import com.example.startwithjetpack.ui.theme.StartWithJetpackTheme
@@ -23,11 +24,13 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @SuppressLint("SuspiciousIndentation")
-    @Inject
-    lateinit var baseNetworkLayer: BaseNetworkLayer
+//    @SuppressLint("SuspiciousIndentation")
+//    @Inject
+//    lateinit var baseNetworkLayer: BaseNetworkLayer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+      installSplashScreen()
+
         setContent {
             StartWithJetpackTheme {
                 // A surface container using the 'background' color from the theme
@@ -41,20 +44,20 @@ class MainActivity : ComponentActivity() {
         }
 
 
-        val repo = PLPRepository(baseNetworkLayer)
-
-        lifecycleScope.launch {
-            when (val response = repo.callApi(50, 1, 20, "position")) {
-                is NetworkResponseState.Success -> {
-                    Log.e("retrofitResponse", response.results.toString())
-                }
-
-                is NetworkResponseState.Fail -> {
-                    Log.e("retrofitResponse", "${response.errorType?.name} ${response.error}")
-                }
-            }
-
-        }
+//        val repo = PLPRepository(baseNetworkLayer)
+//
+//        lifecycleScope.launch {
+//            when (val response = repo.callApi(50, 1, 20, "position")) {
+//                is NetworkResponseState.Success -> {
+//                    Log.e("retrofitResponse", response.results.toString())
+//                }
+//
+//                is NetworkResponseState.Fail -> {
+//                    Log.e("retrofitResponse", "${response.errorType?.name} ${response.error}")
+//                }
+//            }
+//
+//        }
     }
 }
 

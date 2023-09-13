@@ -1,4 +1,4 @@
-package com.example.startwithjetpack
+package com.example.startwithjetpack.di
 
 import com.yasser.networklayer.restAPIs.NetworkLayer
 import com.yasser.networklayer.restAPIs.enums.Header.HEADER_AUTHORIZATION
