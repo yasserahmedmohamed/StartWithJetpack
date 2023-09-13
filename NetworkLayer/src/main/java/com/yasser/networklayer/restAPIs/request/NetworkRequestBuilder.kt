@@ -4,7 +4,7 @@ import com.yasser.networklayer.BuildConfig
 import java.io.File
 
 class NetworkRequestBuilder private constructor(
-    val requestType: NetworkRequestType,
+    val requestMethod: NetworkRequestType,
     val endPointUrl: String,
     val bodyParams: Map<String, Any>?,
     val headersParams: Map<String, String>?,
@@ -14,7 +14,7 @@ class NetworkRequestBuilder private constructor(
 ) {
 
     class Builder {
-        private var requestType: NetworkRequestType? = null
+        private var requestMethod: NetworkRequestType?  = null
 
         private var endPointUrl: String? = null
 
@@ -29,8 +29,8 @@ class NetworkRequestBuilder private constructor(
 
         private var files: List<File>? = null
 
-        fun requestType(requestType: NetworkRequestType) = apply {
-            this.requestType = requestType
+        fun requestMethod(requestMethod: NetworkRequestType) = apply {
+            this.requestMethod = requestMethod
         }
 
         fun endPointUrl(endPointUrl: String) = apply {
@@ -59,7 +59,7 @@ class NetworkRequestBuilder private constructor(
 
         /* in this function will add all validations on request parameters */
         fun build(): NetworkRequestBuilder {
-            if (requestType == null)
+            if (requestMethod == null)
                 throw Exception("requestType not set in NetworkRequestBuilder")
             if (endPointUrl == null) {
                 throw Exception("endPointUrl not set in NetworkRequestBuilder")
@@ -72,7 +72,7 @@ class NetworkRequestBuilder private constructor(
                 baseUrl = BuildConfig.BASE_URL
             }
             return NetworkRequestBuilder(
-                requestType = requestType!!,
+                requestMethod = requestMethod!!,
                 endPointUrl = endPointUrl!!,
                 timeoutInSeconds = timeoutInSeconds!!,
                 bodyParams = bodyParams,

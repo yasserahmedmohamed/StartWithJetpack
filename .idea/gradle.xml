@@ -11,8 +11,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/GraphQlData" />
-            <option value="$PROJECT_DIR$/GraphQlDomain" />
             <option value="$PROJECT_DIR$/NetworkLayer" />
             <option value="$PROJECT_DIR$/app" />
           </set>

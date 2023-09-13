@@ -16,5 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "StartWithJetpack"
 include(":app")
 include(":NetworkLayer")
-include(":GraphQlDomain")
-include(":GraphQlData")
+//include(":GraphQlDomain")
+//include(":GraphQlData")
