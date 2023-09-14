@@ -24,9 +24,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-//    @SuppressLint("SuspiciousIndentation")
-//    @Inject
-//    lateinit var baseNetworkLayer: BaseNetworkLayer
+    @SuppressLint("SuspiciousIndentation")
+    @Inject
+    lateinit var baseNetworkLayer: BaseNetworkLayer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
       installSplashScreen()
@@ -44,20 +44,20 @@ class MainActivity : ComponentActivity() {
         }
 
 
-//        val repo = PLPRepository(baseNetworkLayer)
-//
-//        lifecycleScope.launch {
-//            when (val response = repo.callApi(50, 1, 20, "position")) {
-//                is NetworkResponseState.Success -> {
-//                    Log.e("retrofitResponse", response.results.toString())
-//                }
-//
-//                is NetworkResponseState.Fail -> {
-//                    Log.e("retrofitResponse", "${response.errorType?.name} ${response.error}")
-//                }
-//            }
-//
-//        }
+        val repo = PLPRepository(baseNetworkLayer)
+
+        lifecycleScope.launch {
+            when (val response = repo.callApi(50, 1, 20, "position")) {
+                is NetworkResponseState.Success -> {
+                    Log.e("retrofitResponse", response.results.toString())
+                }
+
+                is NetworkResponseState.Fail -> {
+                    Log.e("retrofitResponse", "${response.errorType?.name} ${response.error}")
+                }
+            }
+
+        }
     }
 }
 
