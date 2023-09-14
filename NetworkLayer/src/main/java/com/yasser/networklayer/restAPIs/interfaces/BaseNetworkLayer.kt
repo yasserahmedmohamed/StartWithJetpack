@@ -4,6 +4,7 @@ import com.yasser.networklayer.restAPIs.request.NetworkRequestBuilder
 import com.yasser.networklayer.restAPIs.response.NetworkResponseState
 import com.yasser.networklayer.restAPIs.response.ProviderResponseData
 import com.google.gson.Gson
+import com.squareup.moshi.Moshi
 import com.yasser.networklayer.restAPIs.response.NetworkUtils
 
 abstract class BaseNetworkLayer constructor(private val provider: NetworkProviderInterface) {
@@ -49,13 +50,15 @@ abstract class BaseNetworkLayer constructor(private val provider: NetworkProvide
     }
 
     private fun <T> mapToObject(responseObject: Any?, type: Class<T>): T? {
-        val gson = Gson()
+        val moshi = Moshi.Builder().build()
+        val jsonAdapter = moshi.adapter(type)
+
         return try {
             if (responseObject is String) {
-                gson.fromJson(responseObject, type)
+                jsonAdapter.fromJson(responseObject)
             } else {
-                val json = gson.toJson(responseObject)
-                gson.fromJson(json, type)
+                val json = jsonAdapter.toJson(type.newInstance())
+                jsonAdapter.fromJson(json)
             }
 
         } catch (e: Throwable) {

@@ -57,6 +57,7 @@ fun  setupRetrofit(configuration:DependencyHandlerScope) {
     configuration.implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
 
     configuration.implementation( "com.squareup.retrofit2:converter-gson:$retrofit_version")
+    configuration.implementation( "com.squareup.retrofit2:converter-moshi:2.4.0")
     configuration.implementation ("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
     configuration.implementation("com.squareup.okhttp3:okhttp:4.9.2")
     configuration.implementation("com.squareup.okhttp3:logging-interceptor:4.9.2")

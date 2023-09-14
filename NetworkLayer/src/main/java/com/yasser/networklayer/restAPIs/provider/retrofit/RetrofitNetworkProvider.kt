@@ -17,6 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 class RetrofitNetworkProvider(private vararg val headers: Header) :
@@ -183,7 +184,7 @@ class RetrofitNetworkProvider(private vararg val headers: Header) :
         retrofit = Retrofit.Builder()
             .client(okkHttpclient!!)
             .baseUrl(currentBaseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
             .create(RetrofitAPIs::class.java)
