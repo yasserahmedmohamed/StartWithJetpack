@@ -23,9 +23,13 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "NEWS_API_KEY", "\"797436fc6fa74ea4aa0c9f5ef8629ff3\"")
+
     }
 
     buildTypes {
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -52,6 +56,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+
+        buildFeatures {
+            buildConfig = true
+        }
+
 }
 
 dependencies {
@@ -85,11 +95,6 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.45")
     kapt ("com.google.dagger:hilt-compiler:2.45")
     implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
-
-
-    //Retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")

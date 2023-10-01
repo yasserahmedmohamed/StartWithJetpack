@@ -1,78 +1,67 @@
 package com.example.startwithjetpack
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
-import com.example.startwithjetpack.PLPFeature.PLPRepository
+import androidx.core.view.WindowCompat
+import com.example.startwithjetpack.domain.useCases.appEntry.AppEntryUseCases
+import com.example.startwithjetpack.navgraph.AppGraph
 import com.example.startwithjetpack.ui.theme.StartWithJetpackTheme
-import com.yasser.networklayer.restAPIs.interfaces.BaseNetworkLayer
-import com.yasser.networklayer.restAPIs.response.NetworkResponseState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @SuppressLint("SuspiciousIndentation")
+
+    val viewModel by viewModels<MainViewModel>()
+
     @Inject
-    lateinit var baseNetworkLayer: BaseNetworkLayer
+    lateinit var appEntryUseCases: AppEntryUseCases
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-      installSplashScreen()
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.keepSplashAppear
+            }
+        }
         setContent {
             StartWithJetpackTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+
+                val isSystemInDarkMode = isSystemInDarkTheme()
+                val systemController = rememberSystemUiController()
+
+                SideEffect {
+                    systemController
+                        .setSystemBarsColor(
+                            color = Color.Transparent,
+                            darkIcons = !isSystemInDarkMode
+                        )
+                }
+
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = MaterialTheme.colorScheme.background
+                        )
                 ) {
-                    Greeting("Android")
+                    val startDestination = viewModel.startDestination
+                    AppGraph(startDestination = startDestination)
                 }
             }
         }
-
-
-        val repo = PLPRepository(baseNetworkLayer)
-
-        lifecycleScope.launch {
-            when (val response = repo.callApi(50, 1, 20, "position")) {
-                is NetworkResponseState.Success -> {
-                    Log.e("retrofitResponse", response.results.toString())
-                }
-
-                is NetworkResponseState.Fail -> {
-                    Log.e("retrofitResponse", "${response.errorType?.name} ${response.error}")
-                }
-            }
-
-        }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    StartWithJetpackTheme {
-        Greeting("Android")
     }
 }

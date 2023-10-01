@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         minSdk = 24
-        buildConfigField("String","BASE_URL","\"https://dev.btech.com/rest/en/V1/\"")
+        buildConfigField("String","BASE_URL","\"https://newsapi.org/v2/\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
